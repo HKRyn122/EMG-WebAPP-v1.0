@@ -40,7 +40,7 @@ const writeVoltage = () => {
 
 export const startDataGeneration = () => {
   if (!intervalId) {
-    running = true; // Allow data generation
+    running = false; // Allow data generation
     cleanOldData(); // Clean old data on start
     writeVoltage(); // Write initial value immediately
 
