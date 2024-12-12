@@ -3,13 +3,13 @@ import { getDatabase } from 'firebase/database';
 import { getAuth, setPersistence, browserLocalPersistence, fetchSignInMethodsForEmail } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAz_6FyYi5s8yi9obcAmPlgoSI8zY-HYGs",
-  authDomain: "emg-capstone-01.firebaseapp.com",
-  databaseURL: "https://emg-capstone-01-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "emg-capstone-01",
-  storageBucket: "emg-capstone-01.firebasestorage.app",
-  messagingSenderId: "1014928201043",
-  appId: "1:1014928201043:web:ca1ea5edbecd31f4de7da6"
+  apiKey: "AIzaSyBb5HvDBTwJPzq7NS-ZgcsuxGhScFxz3tY",
+  authDomain: "emg-proto-web.firebaseapp.com",
+  databaseURL: "https://emg-proto-web-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "emg-proto-web",
+  storageBucket: "emg-proto-web.firebasestorage.app",
+  messagingSenderId: "234583830528",
+  appId: "1:234583830528:web:5285f6d848864aa4ab68e5",
 };
 
 const app = initializeApp(firebaseConfig);

@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --primary: #2563eb;
+  --secondary: #64748b;
+  --accent: #0ea5e9;
+  --background: #f0f9ff;
+}
+
+body {
+  background-color: var(--background);
+  min-height: 100vh;
+}
+
+.card-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.glass-effect {
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.8);
+}

@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth } from '../../firebase';
+import { auth, database } from '../../firebase';
+import { ref, set } from 'firebase/database';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthError from './AuthError';
+import { ROLES } from '../../utils/roles';
 
 function Register() {
   const [formData, setFormData] = useState({
+    username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: ROLES.USER
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +31,13 @@ function Register() {
     setError('');
     setLoading(true);
     
-    const { email, password, confirmPassword } = formData;
+    const { username, email, password, confirmPassword, role } = formData;
+
+    if (!username.trim()) {
+      setError('Username is required');
+      setLoading(false);
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
@@ -43,9 +53,21 @@ function Register() {
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, {
-        displayName: email.split('@')[0]
+      const user = userCredential.user;
+      
+      // Update user profile with username
+      await updateProfile(user, {
+        displayName: username
       });
+      
+      // Create user profile in the database
+      await set(ref(database, `users/${user.uid}`), {
+        username,
+        email: user.email,
+        role: role,
+        createdAt: Date.now()
+      });
+
       navigate('/');
     } catch (error) {
       console.error('Registration error:', error);
@@ -90,6 +112,19 @@ function Register() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
+              <label htmlFor="username" className="sr-only">Username</label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Username"
+                value={formData.username}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
               <label htmlFor="email" className="sr-only">Email address</label>
               <input
                 id="email"
@@ -97,7 +132,7 @@ function Register() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
