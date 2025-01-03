@@ -6,8 +6,6 @@ import { ROLES } from '../../utils/roles';
 function UserManagement() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedUserId, setSelectedUserId] = useState('');
-  const [note, setNote] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -51,24 +49,6 @@ function UserManagement() {
       ));
     } catch (error) {
       console.error('Error updating user role:', error);
-    }
-  };
-
-  const addNote = async (userId) => {
-    if (!note.trim()) return;
-
-    try {
-      const noteRef = ref(database, `users/${userId}/notes`);
-      await update(noteRef, {
-        [Date.now()]: {
-          content: note,
-          timestamp: Date.now()
-        }
-      });
-      setNote('');
-      setSelectedUserId('');
-    } catch (error) {
-      console.error('Error adding note:', error);
     }
   };
 
@@ -133,12 +113,6 @@ function UserManagement() {
                       Toggle Role
                     </button>
                     <button
-                      onClick={() => setSelectedUserId(user.id)}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      Add Note
-                    </button>
-                    <button
                       onClick={() => deleteUser(user.id)}
                       className="text-red-600 hover:text-red-900"
                     >
@@ -150,35 +124,6 @@ function UserManagement() {
             </tbody>
           </table>
         </div>
-
-        {selectedUserId && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md">
-              <h2 className="text-xl font-bold mb-4">Add Note</h2>
-              <textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                className="w-full p-2 border rounded mb-4"
-                placeholder="Enter note for user..."
-                rows="4"
-              />
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={() => setSelectedUserId('')}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => addNote(selectedUserId)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Save Note
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

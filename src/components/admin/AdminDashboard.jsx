@@ -13,7 +13,7 @@ function AdminDashboard() {
           <p className="text-gray-600 mt-2">Welcome, {user?.email}</p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* User Management Card */}
           <Link 
             to="/admin/users" 
@@ -26,18 +26,6 @@ function AdminDashboard() {
             <p className="text-gray-600">Manage user accounts and permissions</p>
           </Link>
 
-          {/* Data History Card */}
-          <Link 
-            to="/admin/history" 
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200"
-          >
-            <div className="text-blue-600 text-3xl mb-4">
-              <i className="fas fa-history"></i>
-            </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Data History</h2>
-            <p className="text-gray-600">View and manage EMG data history</p>
-          </Link>
-
           {/* Analytics Card */}
           <Link 
             to="/admin/analytics" 
@@ -47,7 +35,7 @@ function AdminDashboard() {
               <i className="fas fa-chart-line"></i>
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Analytics</h2>
-            <p className="text-gray-600">View system analytics and statistics</p>
+            <p className="text-gray-600">View user analytics and add notes</p>
           </Link>
         </div>
       </div>

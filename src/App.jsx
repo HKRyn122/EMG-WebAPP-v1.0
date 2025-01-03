@@ -8,7 +8,6 @@ import Register from './components/auth/Register';
 import Navbar from './components/Navbar';
 import AdminDashboard from './components/admin/AdminDashboard';
 import UserManagement from './components/admin/UserManagement';
-import DataHistory from './components/admin/DataHistory';
 import Analytics from './components/admin/Analytics';
 import { AuthProvider } from './contexts/AuthContext';
 import AdminRoute from './components/auth/AdminRoute';
@@ -43,7 +42,6 @@ function App() {
           </>}>
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UserManagement />} />
-            <Route path="/admin/history" element={<DataHistory />} />
             <Route path="/admin/analytics" element={<Analytics />} />
           </Route>
 
