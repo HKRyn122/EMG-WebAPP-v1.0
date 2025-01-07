@@ -22,6 +22,9 @@ function Navbar() {
           <Link to="/about" className="hover:text-blue-200 transition-colors duration-200">
             About
           </Link>
+          <Link to="/settings" className="hover:text-blue-200 transition-colors duration-200">
+            Settings
+          </Link>
           {isAdmin(user) && (
             <Link to="/admin" className="hover:text-blue-200 transition-colors duration-200">
               Admin

@@ -4,7 +4,7 @@ import { useUserNotes } from '../hooks/useUserNotes';
 import EMGChart from './charts/EMGChart';
 import DataCard from './monitor/DataCard';
 import SKOIndicator from './monitor/SKOIndicator';
-import UserNotes from './monitor/UserNotes';
+import AdminNotes from './monitor/AdminNotes';
 import { useAuth } from '../hooks/useAuth';
 
 function Monitor() {
@@ -25,7 +25,7 @@ function Monitor() {
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">EMG Monitoring Dashboard</h1>
         
-        <UserNotes notes={notes} loading={loading} />
+        <AdminNotes />
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
           <DataCard 

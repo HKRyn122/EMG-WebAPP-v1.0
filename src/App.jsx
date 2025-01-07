@@ -6,6 +6,7 @@ import About from './components/About';
 import Login from './components/Login';
 import Register from './components/auth/Register';
 import Navbar from './components/Navbar';
+import Settings from './components/settings/Settings';
 import AdminDashboard from './components/admin/AdminDashboard';
 import UserManagement from './components/admin/UserManagement';
 import Analytics from './components/admin/Analytics';
@@ -33,6 +34,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/monitor" element={<Monitor />} />
             <Route path="/about" element={<About />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
 
           {/* Admin Routes */}
