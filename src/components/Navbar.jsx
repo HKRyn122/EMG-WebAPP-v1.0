@@ -10,7 +10,7 @@ function Navbar() {
   return (
     <nav className="bg-blue-600 text-white p-4">
       <div className="container mx-auto flex items-center justify-between">
-        <Link to="/" className="text-xl font-bold">EMG System</Link>
+        <Link to="/" className="text-xl font-bold">S-EMG System</Link>
         
         <div className="flex items-center space-x-6">
           <Link to="/" className="hover:text-blue-200 transition-colors duration-200">
@@ -21,9 +21,6 @@ function Navbar() {
           </Link>
           <Link to="/about" className="hover:text-blue-200 transition-colors duration-200">
             About
-          </Link>
-          <Link to="/settings" className="hover:text-blue-200 transition-colors duration-200">
-            Settings
           </Link>
           {isAdmin(user) && (
             <Link to="/admin" className="hover:text-blue-200 transition-colors duration-200">

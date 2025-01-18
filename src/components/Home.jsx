@@ -7,7 +7,7 @@ function Home() {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Welcome to EMG Monitoring System
+            Welcome to S-EMG Monitoring System
           </h1>
           <p className="text-xl text-gray-600 mb-12 leading-relaxed">
             Advanced muscle activity measurement and analysis using state-of-the-art EMG technology
@@ -26,7 +26,7 @@ function Home() {
               <div className="text-blue-600 text-4xl mb-4">
                 <i className="fas fa-calculator"></i>
               </div>
-              <h3 className="text-xl font-semibold mb-2">SKO Analysis</h3>
+              <h3 className="text-xl font-semibold mb-2">Muscle Strength Scale Analysis</h3>
               <p className="text-gray-600">Automatic muscle strength calculation</p>
             </div>
             

@@ -40,9 +40,9 @@ function About() {
               <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl font-bold text-blue-600">IG</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900">Ian Games</h3>
-              <p className="text-blue-600 font-medium">Project Lead</p>
-              <p className="text-gray-600 mt-2">System Architecture & Team Management</p>
+              <h3 className="text-xl font-bold text-gray-900">Divyananda Japara</h3>
+              <p className="text-blue-600 font-medium">Anggota 1</p>
+              <p className="text-gray-600 mt-2">Hardware & Electronics System Development</p>
             </div>
             
             <div className="card-gradient p-6 rounded-xl shadow-lg text-center">
@@ -50,8 +50,8 @@ function About() {
                 <span className="text-3xl font-bold text-blue-600">H</span>
               </div>
               <h3 className="text-xl font-bold text-gray-900">Henry</h3>
-              <p className="text-blue-600 font-medium">Developer</p>
-              <p className="text-gray-600 mt-2">Frontend Development & UI Design</p>
+              <p className="text-blue-600 font-medium">Anggota 2</p>
+              <p className="text-gray-600 mt-2">Software Development</p>
             </div>
             
             <div className="card-gradient p-6 rounded-xl shadow-lg text-center">
@@ -59,8 +59,8 @@ function About() {
                 <span className="text-3xl font-bold text-blue-600">M</span>
               </div>
               <h3 className="text-xl font-bold text-gray-900">Mangnix</h3>
-              <p className="text-blue-600 font-medium">Data Scientist</p>
-              <p className="text-gray-600 mt-2">Data Analysis & Algorithm Development</p>
+              <p className="text-blue-600 font-medium">Anggota 3</p>
+              <p className="text-gray-600 mt-2">Hardware & Electric System Development</p>
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@ const SKOIndicator = ({ currentSKO }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-4">Current SKO Status</h2>
+      <h2 className="text-2xl font-bold mb-4">Current MSS Status</h2>
       <div className="flex items-center mb-4">
         <div className="text-4xl font-bold text-orange-600 mr-4">
           Grade {currentSKO}

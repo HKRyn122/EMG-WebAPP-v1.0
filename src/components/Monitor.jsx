@@ -23,7 +23,7 @@ function Monitor() {
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gradient-to-br from-blue-50 to-sky-50 py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">EMG Monitoring Dashboard</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">S-EMG Monitoring Dashboard</h1>
         
         <AdminNotes />
         
@@ -50,7 +50,7 @@ function Monitor() {
             icon="chart-line"
           />
           <DataCard 
-            title="SKO (Muscle Strength)"
+            title="MSS (Muscle Strength Scale)"
             value={skoValue}
             unit=""
             className="text-orange-600"

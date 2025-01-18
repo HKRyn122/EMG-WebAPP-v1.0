@@ -16,6 +16,29 @@ export const useEMGData = () => {
   const [timestamps, setTimestamps] = useState([]);
   const { user } = useAuth();
 
+  // Retry failed saves
+  useEffect(() => {
+    const retryFailedSaves = async () => {
+      if (!user?.uid) return;
+
+      const failedSaves = JSON.parse(localStorage.getItem('failedEmgSaves') || '[]');
+      if (failedSaves.length === 0) return;
+
+      const newFailedSaves = [];
+      for (const save of failedSaves) {
+        try {
+          await saveEMGHistory(user.uid, save);
+        } catch (error) {
+          newFailedSaves.push(save);
+        }
+      }
+
+      localStorage.setItem('failedEmgSaves', JSON.stringify(newFailedSaves));
+    };
+
+    retryFailedSaves();
+  }, [user]);
+
   useEffect(() => {
     startDataGeneration();
 
@@ -34,7 +57,7 @@ export const useEMGData = () => {
         setTimestamps(timestamps || []);
 
         // Save history if user is logged in
-        if (user) {
+        if (user?.uid) {
           await saveEMGHistory(user.uid, {
             currentValue,
             peakValue,
