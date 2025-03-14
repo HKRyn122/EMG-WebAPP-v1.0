@@ -3,27 +3,34 @@ import { database } from '../firebase';
 
 let running = true;
 let intervalId = null;
+let currentTimestamp = 1;
 
 const generateVoltage = () => {
-  const minVoltage = 0.5;
-  const maxVoltage = 5.5;
+  // Generate a random voltage between 1 and 5 mV
+  const minVoltage = 1;
+  const maxVoltage = 5;
   const voltage = minVoltage + (Math.random() * (maxVoltage - minVoltage));
   return voltage.toFixed(2);
 };
 
 const cleanOldData = async () => {
   try {
-    const thirtyMinutesAgo = Date.now() - (30 * 60 * 1000);
-    const voltageRef = ref(database, 'Muscle Voltage');
+    const voltageRef = ref(database, 'mv');
     const snapshot = await get(voltageRef);
     const data = snapshot.val() || {};
     
-    // Remove entries older than 30 minutes
-    Object.entries(data).forEach(([key, value]) => {
-      const timestamp = parseInt(value.split('-')[1]);
-      if (timestamp < thirtyMinutesAgo) {
-        set(ref(database, `Muscle Voltage/${key}`), null);
-      }
+    // Keep only the last 100 entries
+    const entries = Object.entries(data)
+      .sort((a, b) => {
+        const timestampA = parseInt(a[1].split('-')[1]);
+        const timestampB = parseInt(b[1].split('-')[1]);
+        return timestampB - timestampA;
+      })
+      .slice(100);
+    
+    // Remove old entries
+    entries.forEach(([key]) => {
+      set(ref(database, `mv/${key}`), null);
     });
   } catch (error) {
     console.error('Error cleaning old data:', error);
@@ -31,35 +38,39 @@ const cleanOldData = async () => {
 };
 
 const writeVoltage = () => {
-  const timestamp = Date.now();
   const voltage = generateVoltage();
-  const dataString = `${voltage}-${timestamp}`;
+  const dataString = `${voltage}-${currentTimestamp}`;
   
-  set(ref(database, `Muscle Voltage/${timestamp}`), dataString);
+  // Generate a unique key using timestamp and random string
+  const key = `-OLF${Math.random().toString(36).substr(2, 8)}`;
+  set(ref(database, `mv/${key}`), dataString);
+  
+  // Increment timestamp for next entry
+  currentTimestamp++;
 };
 
 export const startDataGeneration = () => {
   if (!intervalId) {
-    running = false; // Allow data generation
-    cleanOldData(); // Clean old data on start
-    writeVoltage(); // Write initial value immediately
+    running = true;
+    currentTimestamp = 1; // Reset timestamp counter
+    cleanOldData();
+    writeVoltage();
 
     intervalId = setInterval(() => {
       if (running) {
         writeVoltage();
       } else {
-        clearInterval(intervalId); // Stop interval if running is false
-        intervalId = null; // Reset the interval ID
+        clearInterval(intervalId);
+        intervalId = null;
       }
-    }, 2000); // Update every 2 seconds
+    }, 1000); // Update every second
   }
 };
 
 export const stopDataGeneration = () => {
-  running = true; // Stop data generation
+  running = false;
   if (intervalId) {
-    clearInterval(intervalId); // Clear the interval
-    intervalId = null; // Reset the interval ID
+    clearInterval(intervalId);
+    intervalId = null;
   }
 };
-

@@ -42,7 +42,7 @@ export const useEMGData = () => {
   useEffect(() => {
     startDataGeneration();
 
-    const dataRef = ref(database, 'Muscle Voltage');
+    const dataRef = ref(database, 'mv');
     const unsubscribe = onValue(dataRef, async (snapshot) => {
       const processedData = processEMGData(snapshot.val());
       
