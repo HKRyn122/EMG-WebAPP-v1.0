@@ -51,12 +51,17 @@ const EMGChart = ({ data, timestamps }) => {
         title: {
           display: true,
           text: 'Time'
+        },
+        ticks: {
+          maxRotation: 45,
+          minRotation: 45
         }
       }
     },
     animation: {
       duration: 0 // Disable animations for better performance
-    }
+    },
+    maintainAspectRatio: false
   };
 
   const chartData = {
@@ -73,7 +78,11 @@ const EMGChart = ({ data, timestamps }) => {
     ]
   };
 
-  return <Line options={chartOptions} data={chartData} />;
+  return (
+    <div style={{ height: '400px' }}>
+      <Line options={chartOptions} data={chartData} />
+    </div>
+  );
 };
 
 export default EMGChart;

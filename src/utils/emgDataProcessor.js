@@ -36,14 +36,17 @@ export const processEMGData = (data) => {
 
     // Get last 30 entries for chart
     const last30Entries = entries.slice(0, 30).reverse();
-    const currentTime = Date.now();
 
     return {
       currentValue: Number(currentValue.toFixed(2)),
       peakValue: Number(peakValue.toFixed(2)),
       averageValue,
       chartData: last30Entries.map(entry => Number(entry.value.toFixed(2))),
-      timestamps: last30Entries.map(() => new Date(currentTime).toLocaleTimeString())
+      timestamps: last30Entries.map(entry => {
+        const date = new Date();
+        date.setSeconds(date.getSeconds() - (last30Entries[0].timestamp - entry.timestamp));
+        return date.toLocaleTimeString();
+      })
     };
   } catch (error) {
     console.error('Error processing EMG data:', error);
