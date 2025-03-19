@@ -53,11 +53,14 @@ const EMGChart = ({ data, timestamps }) => {
           text: 'Time'
         }
       }
+    },
+    animation: {
+      duration: 0 // Disable animations for better performance
     }
   };
 
   const chartData = {
-    labels: timestamps.map(t => new Date(t).toLocaleTimeString()),
+    labels: timestamps,
     datasets: [
       {
         label: 'EMG Value (mV)',

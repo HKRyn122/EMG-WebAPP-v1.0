@@ -3,7 +3,6 @@ import { ref, onValue } from 'firebase/database';
 import { database } from '../firebase';
 import { processEMGData } from '../utils/emgDataProcessor';
 import { calculateSKO } from '../utils/skoCalculator';
-import { startDataGeneration, stopDataGeneration } from '../utils/dataSimulation';
 import { saveEMGHistory } from '../utils/history';
 import { useAuth } from './useAuth';
 
@@ -40,8 +39,6 @@ export const useEMGData = () => {
   }, [user]);
 
   useEffect(() => {
-    startDataGeneration();
-
     const dataRef = ref(database, 'mv');
     const unsubscribe = onValue(dataRef, async (snapshot) => {
       const processedData = processEMGData(snapshot.val());
@@ -71,7 +68,6 @@ export const useEMGData = () => {
 
     return () => {
       unsubscribe();
-      stopDataGeneration();
     };
   }, [user]);
 
