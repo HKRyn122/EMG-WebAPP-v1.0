@@ -15,53 +15,52 @@ export const useEMGData = () => {
   const [timestamps, setTimestamps] = useState([]);
   const { user } = useAuth();
 
-  // Retry failed saves
+  // Reset all values when component mounts or user changes
   useEffect(() => {
-    const retryFailedSaves = async () => {
-      if (!user?.uid) return;
-
-      const failedSaves = JSON.parse(localStorage.getItem('failedEmgSaves') || '[]');
-      if (failedSaves.length === 0) return;
-
-      const newFailedSaves = [];
-      for (const save of failedSaves) {
-        try {
-          await saveEMGHistory(user.uid, save);
-        } catch (error) {
-          newFailedSaves.push(save);
-        }
-      }
-
-      localStorage.setItem('failedEmgSaves', JSON.stringify(newFailedSaves));
-    };
-
-    retryFailedSaves();
-  }, [user]);
+    setCurrentValue(0);
+    setPeakValue(0);
+    setAverageValue(0);
+    setSkoValue('0');
+    setChartData([]);
+    setTimestamps([]);
+  }, [user?.uid]);
 
   useEffect(() => {
     const dataRef = ref(database, 'mv');
+    let isFirstUpdate = true;
+
     const unsubscribe = onValue(dataRef, async (snapshot) => {
+      // Skip the first update to avoid loading old data
+      if (isFirstUpdate) {
+        isFirstUpdate = false;
+        return;
+      }
+
       const processedData = processEMGData(snapshot.val());
       
       if (processedData) {
         const { currentValue, peakValue, averageValue, chartData, timestamps } = processedData;
         
-        setCurrentValue(currentValue || 0);
-        setPeakValue(peakValue || 0);
-        setAverageValue(averageValue || 0);
-        setSkoValue(calculateSKO(currentValue || 0));
-        setChartData(chartData || []);
-        setTimestamps(timestamps || []);
+        setCurrentValue(currentValue);
+        setPeakValue(peakValue);
+        setAverageValue(averageValue);
+        setSkoValue(calculateSKO(currentValue));
+        setChartData(chartData);
+        setTimestamps(timestamps);
 
-        // Save history if user is logged in
-        if (user?.uid) {
-          await saveEMGHistory(user.uid, {
-            currentValue,
-            peakValue,
-            averageValue,
-            skoValue: calculateSKO(currentValue || 0),
-            timestamp: Date.now()
-          });
+        // Save history if user is logged in and values are valid
+        if (user?.uid && currentValue > 0) {
+          try {
+            await saveEMGHistory(user.uid, {
+              currentValue,
+              peakValue,
+              averageValue,
+              skoValue: calculateSKO(currentValue),
+              timestamp: Date.now()
+            });
+          } catch (error) {
+            console.error('Error saving EMG history:', error);
+          }
         }
       }
     });
@@ -69,7 +68,7 @@ export const useEMGData = () => {
     return () => {
       unsubscribe();
     };
-  }, [user]);
+  }, [user?.uid]);
 
   return {
     currentValue,

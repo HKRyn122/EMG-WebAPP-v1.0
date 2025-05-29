@@ -6,6 +6,11 @@ import { ROLES } from '../../utils/roles';
 function UserManagement() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userStats, setUserStats] = useState({
+    total: 0,
+    admins: 0,
+    regularUsers: 0
+  });
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -18,6 +23,15 @@ function UserManagement() {
             ...data
           }));
           setUsers(usersData);
+          
+          // Calculate user statistics
+          const stats = usersData.reduce((acc, user) => ({
+            total: acc.total + 1,
+            admins: acc.admins + (user.role === ROLES.ADMIN ? 1 : 0),
+            regularUsers: acc.regularUsers + (user.role === ROLES.USER ? 1 : 0)
+          }), { total: 0, admins: 0, regularUsers: 0 });
+          
+          setUserStats(stats);
         }
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -34,6 +48,11 @@ function UserManagement() {
       try {
         await remove(ref(database, `users/${userId}`));
         setUsers(users.filter(user => user.id !== userId));
+        setUserStats(prev => ({
+          total: prev.total - 1,
+          admins: prev.admins - (users.find(u => u.id === userId)?.role === ROLES.ADMIN ? 1 : 0),
+          regularUsers: prev.regularUsers - (users.find(u => u.id === userId)?.role === ROLES.USER ? 1 : 0)
+        }));
       } catch (error) {
         console.error('Error deleting user:', error);
       }
@@ -47,6 +66,11 @@ function UserManagement() {
       setUsers(users.map(user => 
         user.id === userId ? { ...user, role: newRole } : user
       ));
+      setUserStats(prev => ({
+        total: prev.total,
+        admins: prev.admins + (newRole === ROLES.ADMIN ? 1 : -1),
+        regularUsers: prev.regularUsers + (newRole === ROLES.USER ? 1 : -1)
+      }));
     } catch (error) {
       console.error('Error updating user role:', error);
     }
@@ -64,6 +88,21 @@ function UserManagement() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-sky-50 py-8">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold text-gray-900 mb-8">User Management</h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Users</h3>
+            <p className="text-3xl font-bold text-blue-600">{userStats.total}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Administrators</h3>
+            <p className="text-3xl font-bold text-purple-600">{userStats.admins}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Regular Users</h3>
+            <p className="text-3xl font-bold text-green-600">{userStats.regularUsers}</p>
+          </div>
+        </div>
         
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
