@@ -26,6 +26,7 @@ ChartJS.register(
 const EMGChart = ({ data, timestamps }) => {
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
@@ -59,13 +60,12 @@ const EMGChart = ({ data, timestamps }) => {
       }
     },
     animation: {
-      duration: 0 // Disable animations for better performance
-    },
-    maintainAspectRatio: false
+      duration: 0
+    }
   };
 
   const chartData = {
-    labels: timestamps,
+    labels: timestamps.map(t => new Date(t).toLocaleTimeString()),
     datasets: [
       {
         label: 'EMG Value (mV)',

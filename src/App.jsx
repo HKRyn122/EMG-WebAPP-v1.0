@@ -10,6 +10,7 @@ import Settings from './components/settings/Settings';
 import AdminDashboard from './components/admin/AdminDashboard';
 import UserManagement from './components/admin/UserManagement';
 import Analytics from './components/admin/Analytics';
+import Landing from './components/Landing';
 import { AuthProvider } from './contexts/AuthContext';
 import AdminRoute from './components/auth/AdminRoute';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -20,6 +21,9 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          {/* Landing Page */}
+          <Route path="/" element={<Landing />} />
+
           {/* Auth Routes */}
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
@@ -31,7 +35,7 @@ function App() {
             <Navbar />
             <ProtectedRoute />
           </>}>
-            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Home />} />
             <Route path="/monitor" element={<Monitor />} />
             <Route path="/about" element={<About />} />
             <Route path="/settings" element={<Settings />} />
