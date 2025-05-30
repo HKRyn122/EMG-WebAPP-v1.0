@@ -74,15 +74,32 @@ function UserAnalytics({ userId }) {
         />
         <AnalyticsCard
           title="Average SKO"
-          value={analytics.averageSKO?.toFixed(2) || 'N/A'}
+          value={analytics.averageSKO}
           icon="star"
           className="text-purple-600"
         />
         <AnalyticsCard
-          title="Latest SKO"
-          value={analytics.latestSKO || 'N/A'}
-          icon="clock"
+          title="Peak SKO"
+          value={analytics.peakSKO}
+          icon="arrow-up"
           className="text-green-600"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <AnalyticsCard
+          title="Average Muscle Voltage"
+          value={analytics.averageVoltage}
+          unit="mV"
+          icon="bolt"
+          className="text-orange-600"
+        />
+        <AnalyticsCard
+          title="Peak Muscle Voltage"
+          value={analytics.peakVoltage}
+          unit="mV"
+          icon="bolt"
+          className="text-red-600"
         />
       </div>
 

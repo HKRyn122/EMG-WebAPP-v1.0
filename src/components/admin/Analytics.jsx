@@ -8,9 +8,7 @@ function Analytics() {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [analyticsStats, setAnalyticsStats] = useState({
     totalUsers: 0,
-    totalReadings: 0,
-    activeUsers: 0,
-    averageSKO: 0
+    totalReadings: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -29,14 +27,10 @@ function Analytics() {
 
         // Calculate statistics
         const totalReadings = history.length;
-        const activeUsers = new Set(history.map(h => h.userId)).size;
-        const averageSKO = history.reduce((acc, curr) => acc + parseFloat(curr.skoValue || 0), 0) / (totalReadings || 1);
 
         setAnalyticsStats({
           totalUsers: users,
-          totalReadings,
-          activeUsers,
-          averageSKO: parseFloat(averageSKO.toFixed(2))
+          totalReadings
         });
       } catch (error) {
         console.error('Error fetching analytics stats:', error);
@@ -70,7 +64,7 @@ function Analytics() {
         {!selectedUserId && (
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-8">Analytics Overview</h1>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Users</h3>
                 <p className="text-3xl font-bold text-blue-600">{analyticsStats.totalUsers}</p>
@@ -78,14 +72,6 @@ function Analytics() {
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Readings</h3>
                 <p className="text-3xl font-bold text-green-600">{analyticsStats.totalReadings}</p>
-              </div>
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">Active Users</h3>
-                <p className="text-3xl font-bold text-purple-600">{analyticsStats.activeUsers}</p>
-              </div>
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">Average SKO</h3>
-                <p className="text-3xl font-bold text-orange-600">{analyticsStats.averageSKO}</p>
               </div>
             </div>
           </div>
@@ -110,4 +96,4 @@ function Analytics() {
   );
 }
 
-export default Analytics;
+export default Analytics

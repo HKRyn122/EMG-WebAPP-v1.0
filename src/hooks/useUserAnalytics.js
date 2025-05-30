@@ -6,7 +6,9 @@ export const useUserAnalytics = (userId) => {
   const [analytics, setAnalytics] = useState({
     totalReadings: 0,
     averageSKO: 0,
-    latestSKO: null,
+    peakSKO: 0,
+    averageVoltage: 0,
+    peakVoltage: 0,
     skoDistribution: {
       '0-1': 0,
       '2-3': 0,
@@ -39,9 +41,16 @@ export const useUserAnalytics = (userId) => {
 
           // Calculate analytics
           const totalReadings = userHistory.length;
-          const skoValues = userHistory.map(entry => parseInt(entry.skoValue));
+          
+          // Calculate SKO statistics
+          const skoValues = userHistory.map(entry => parseInt(entry.skoValue) || 0);
           const averageSKO = skoValues.reduce((acc, val) => acc + val, 0) / totalReadings;
-          const latestSKO = userHistory[0]?.skoValue || null;
+          const peakSKO = Math.max(...skoValues);
+
+          // Calculate voltage statistics
+          const voltageValues = userHistory.map(entry => parseFloat(entry.currentValue) || 0);
+          const averageVoltage = voltageValues.reduce((acc, val) => acc + val, 0) / totalReadings;
+          const peakVoltage = Math.max(...voltageValues);
 
           // Calculate SKO distribution
           const skoDistribution = {
@@ -61,8 +70,10 @@ export const useUserAnalytics = (userId) => {
 
           setAnalytics({
             totalReadings,
-            averageSKO,
-            latestSKO,
+            averageSKO: Number(averageSKO.toFixed(2)),
+            peakSKO,
+            averageVoltage: Number(averageVoltage.toFixed(2)),
+            peakVoltage: Number(peakVoltage.toFixed(2)),
             skoDistribution,
             recentHistory: userHistory.slice(0, 10) // Get last 10 readings
           });

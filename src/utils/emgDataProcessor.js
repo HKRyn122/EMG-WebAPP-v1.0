@@ -13,9 +13,9 @@ export const processEMGData = (data) => {
 
     if (entries.length === 0) return null;
 
-    // Get only data from the last 30 seconds
-    const thirtySecondsAgo = Date.now() - 30000;
-    const recentEntries = entries.filter(entry => entry.timestamp > thirtySecondsAgo);
+    // Get only data from the last 2 minutes
+    const twoMinutesAgo = Date.now() - 120000;
+    const recentEntries = entries.filter(entry => entry.timestamp > twoMinutesAgo);
     
     if (recentEntries.length === 0) {
       return {
@@ -34,8 +34,8 @@ export const processEMGData = (data) => {
     // Calculate average from recent entries only
     const averageValue = Number((allValues.reduce((acc, val) => acc + val, 0) / allValues.length).toFixed(2));
 
-    // Get last 30 entries for chart, but only from recent data
-    const chartEntries = recentEntries.slice(-30).reverse();
+    // Get last 60 entries for chart, but only from recent data
+    const chartEntries = recentEntries.slice(-60).reverse();
 
     return {
       currentValue: Number(currentValue.toFixed(2)),
