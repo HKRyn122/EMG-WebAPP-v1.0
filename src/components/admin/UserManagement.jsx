@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { database } from '../../firebase';
 import { ref, get, remove, update } from 'firebase/database';
 import { ROLES } from '../../utils/roles';
+import { Link } from 'react-router-dom';
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -25,7 +26,6 @@ function UserManagement() {
           }));
           setUsers(usersData);
           
-          // Calculate user statistics
           const stats = usersData.reduce((acc, user) => ({
             total: acc.total + 1,
             admins: acc.admins + (user.role === ROLES.ADMIN ? 1 : 0),
@@ -103,130 +103,144 @@ function UserManagement() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-sky-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">User Management</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Users</h3>
-            <p className="text-3xl font-bold text-blue-600">{userStats.total}</p>
+        <div className="medical-card mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center">
+              <Link to="/admin" className="text-primary hover:text-primary-dark mr-4">
+                <i className="fas fa-arrow-left"></i>
+              </Link>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+                <p className="text-sm text-gray-600">Manage system users and permissions</p>
+              </div>
+            </div>
+            <img src="/V3 1200-01.png" alt="Logo" className="h-10" />
           </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Administrators</h3>
-            <p className="text-3xl font-bold text-purple-600">{userStats.admins}</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="stats-card">
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <i className="fas fa-users text-xl text-primary"></i>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600">Total Users</p>
+                  <p className="text-2xl font-bold text-primary">{userStats.total}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="stats-card">
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center">
+                  <i className="fas fa-user-shield text-xl text-secondary"></i>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600">Administrators</p>
+                  <p className="text-2xl font-bold text-secondary">{userStats.admins}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="stats-card">
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <i className="fas fa-user text-xl text-primary"></i>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600">Regular Users</p>
+                  <p className="text-2xl font-bold text-primary">{userStats.regularUsers}</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Regular Users</h3>
-            <p className="text-3xl font-bold text-green-600">{userStats.regularUsers}</p>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  onClick={() => requestSort('username')}
-                >
-                  <div className="flex items-center">
-                    Username
-                    {sortConfig.key === 'username' && (
-                      <span className="ml-2">
-                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  onClick={() => requestSort('email')}
-                >
-                  <div className="flex items-center">
-                    Email
-                    {sortConfig.key === 'email' && (
-                      <span className="ml-2">
-                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  onClick={() => requestSort('role')}
-                >
-                  <div className="flex items-center">
-                    Role
-                    {sortConfig.key === 'role' && (
-                      <span className="ml-2">
-                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  onClick={() => requestSort('createdAt')}
-                >
-                  <div className="flex items-center">
-                    Created At
-                    {sortConfig.key === 'createdAt' && (
-                      <span className="ml-2">
-                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {sortedUsers.map((user) => (
-                <tr key={user.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{user.username}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{user.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      user.role === ROLES.ADMIN ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
-                    }`}>
-                      {user.role}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
-                    <button
-                      onClick={() => toggleRole(user.id, user.role)}
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
-                      Toggle Role
-                    </button>
-                    <button
-                      onClick={() => deleteUser(user.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Delete
-                    </button>
-                  </td>
+
+          <div className="bg-white rounded-xl shadow-soft overflow-hidden">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th onClick={() => requestSort('username')} className="cursor-pointer">
+                    <div className="flex items-center">
+                      Username
+                      {sortConfig.key === 'username' && (
+                        <i className={`fas fa-sort-${sortConfig.direction === 'asc' ? 'up' : 'down'} ml-2`}></i>
+                      )}
+                    </div>
+                  </th>
+                  <th onClick={() => requestSort('email')} className="cursor-pointer">
+                    <div className="flex items-center">
+                      Email
+                      {sortConfig.key === 'email' && (
+                        <i className={`fas fa-sort-${sortConfig.direction === 'asc' ? 'up' : 'down'} ml-2`}></i>
+                      )}
+                    </div>
+                  </th>
+                  <th onClick={() => requestSort('role')} className="cursor-pointer">
+                    <div className="flex items-center">
+                      Role
+                      {sortConfig.key === 'role' && (
+                        <i className={`fas fa-sort-${sortConfig.direction === 'asc' ? 'up' : 'down'} ml-2`}></i>
+                      )}
+                    </div>
+                  </th>
+                  <th onClick={() => requestSort('createdAt')} className="cursor-pointer">
+                    <div className="flex items-center">
+                      Created At
+                      {sortConfig.key === 'createdAt' && (
+                        <i className={`fas fa-sort-${sortConfig.direction === 'asc' ? 'up' : 'down'} ml-2`}></i>
+                      )}
+                    </div>
+                  </th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {sortedUsers.map((user) => (
+                  <tr key={user.id} className="hover:bg-gray-50 transition-colors duration-150">
+                    <td className="font-medium text-gray-900">{user.username}</td>
+                    <td className="text-gray-600">{user.email}</td>
+                    <td>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        user.role === ROLES.ADMIN 
+                          ? 'bg-secondary/10 text-secondary' 
+                          : 'bg-primary/10 text-primary'
+                      }`}>
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="text-gray-600">
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </td>
+                    <td>
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => toggleRole(user.id, user.role)}
+                          className="text-secondary hover:text-secondary-dark transition-colors duration-200"
+                        >
+                          <i className="fas fa-exchange-alt"></i>
+                        </button>
+                        <button
+                          onClick={() => deleteUser(user.id)}
+                          className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                        >
+                          <i className="fas fa-trash-alt"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

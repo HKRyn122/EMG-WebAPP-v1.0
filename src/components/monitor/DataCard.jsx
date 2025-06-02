@@ -4,13 +4,15 @@ const DataCard = ({ title, value, unit, className, icon }) => {
   const displayValue = typeof value === 'number' ? value.toFixed(2) : value;
   
   return (
-    <div className="card-gradient p-6 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
-        <i className={`fas fa-${icon} text-xl ${className}`}></i>
+    <div className="vital-card slide-up">
+      <div className="vital-icon">
+        <i className={`fas fa-${icon}`}></i>
       </div>
-      <div className={`text-3xl font-bold ${className}`}>
-        {displayValue} {unit}
+      <div className="ml-4">
+        <h3 className="text-sm font-medium text-gray-600">{title}</h3>
+        <div className={`text-2xl font-bold ${className}`}>
+          {displayValue} {unit}
+        </div>
       </div>
     </div>
   );
