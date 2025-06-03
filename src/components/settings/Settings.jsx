@@ -25,19 +25,16 @@ function Settings() {
     setMessage({ type: '', text: '' });
 
     try {
-      // Update profile data
       if (formData.username !== user.username) {
         await update(ref(database, `users/${user.uid}`), {
           username: formData.username
         });
       }
 
-      // Update email if changed
       if (formData.email !== user.email) {
         await updateEmail(auth.currentUser, formData.email);
       }
 
-      // Update password if provided
       if (formData.newPassword) {
         if (formData.newPassword !== formData.confirmPassword) {
           throw new Error('Passwords do not match');
@@ -54,75 +51,131 @@ function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-sky-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] to-white py-8">
       <div className="container mx-auto px-4 max-w-2xl">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Settings</h1>
-
-        {message.text && (
-          <div className={`p-4 rounded-lg mb-4 ${
-            message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-          }`}>
-            {message.text}
+        <div className="medical-card">
+          <div className="flex items-center mb-8">
+            <img src="/V3 1200-01.png" alt="Logo" className="h-12 mr-6" />
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Account Settings</h1>
+              <p className="text-gray-600 mt-1">Manage your profile and preferences</p>
+            </div>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
-          <div className="space-y-6">
+          {message.text && (
+            <div className={`p-4 rounded-lg mb-6 ${
+              message.type === 'success' 
+                ? 'bg-green-50 border-l-4 border-green-400 text-green-700'
+                : 'bg-red-50 border-l-4 border-red-400 text-red-700'
+            }`}>
+              <div className="flex items-center">
+                <i className={`fas fa-${message.type === 'success' ? 'check-circle'
+                  : 'exclamation-circle'} mr-3`}></i>
+                {message.text}
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Username</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i className="fas fa-user text-gray-400"></i>
+                </div>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00A79D] focus:ring-2 focus:ring-[#00A79D]/20 transition-all duration-200"
+                  placeholder="Your username"
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i className="fas fa-envelope text-gray-400"></i>
+                </div>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00A79D] focus:ring-2 focus:ring-[#00A79D]/20 transition-all duration-200"
+                  placeholder="Your email"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">New Password</label>
-              <input
-                type="password"
-                name="newPassword"
-                value={formData.newPassword}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
+            <div className="border-t border-gray-200 pt-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Change Password</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i className="fas fa-lock text-gray-400"></i>
+                    </div>
+                    <input
+                      type="password"
+                      name="newPassword"
+                      value={formData.newPassword}
+                      onChange={handleChange}
+                      className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00A79D] focus:ring-2 focus:ring-[#00A79D]/20 transition-all duration-200"
+                      placeholder="Enter new password"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i className="fas fa-lock text-gray-400"></i>
+                    </div>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00A79D] focus:ring-2 focus:ring-[#00A79D]/20 transition-all duration-200"
+                      placeholder="Confirm new password"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
+            <div className="flex justify-end pt-6">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`flex items-center px-6 py-3 rounded-lg text-white font-medium transition-all duration-200 ${
+                  loading
+                    ? 'bg-[#00A79D]/60 cursor-not-allowed'
+                    : 'bg-[#00A79D] hover:bg-[#006B65] shadow-md hover:shadow-lg'
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-save mr-2"></i>
+                    Save Changes
+                  </>
+                )}
+              </button>
             </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                loading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
-              }`}
-            >
-              {loading ? 'Updating...' : 'Update Profile'}
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
