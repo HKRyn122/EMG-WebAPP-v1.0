@@ -4,6 +4,9 @@ import { auth, database } from '../../firebase';
 import { ref, set } from 'firebase/database';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROLES } from '../../utils/roles';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { t } from '../../utils/translations';
+import LanguageToggle from '../LanguageToggle';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -16,6 +19,7 @@ function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { language } = useLanguage();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,19 +37,19 @@ function Register() {
     const { username, email, password, confirmPassword, role } = formData;
 
     if (!username.trim()) {
-      setError('Username is required');
+      setError(t('usernameRequired', language));
       setLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('passwordMismatch', language));
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError('Password should be at least 6 characters');
+      setError(t('passwordTooShort', language));
       setLoading(false);
       return;
     }
@@ -70,19 +74,19 @@ function Register() {
       console.error('Registration error:', error);
       switch (error.code) {
         case 'auth/email-already-in-use':
-          setError('This email is already registered');
+          setError(t('emailInUse', language));
           break;
         case 'auth/invalid-email':
-          setError('Invalid email address');
+          setError(t('invalidEmail', language));
           break;
         case 'auth/operation-not-allowed':
-          setError('Email/password registration is not enabled');
+          setError(t('registrationDisabled', language));
           break;
         case 'auth/weak-password':
-          setError('Password should be at least 6 characters');
+          setError(t('weakPassword', language));
           break;
         default:
-          setError('Failed to create account. Please try again.');
+          setError(t('registrationFailed', language));
       }
     } finally {
       setLoading(false);
@@ -90,147 +94,193 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f8fafc] to-white p-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <img src="/V3 1200-01.png" alt="Logo" className="h-16 mx-auto mb-6" />
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] via-white to-[#f0f9ff] flex">
+      {/* Language Toggle - Fixed Position */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageToggle />
+      </div>
 
-        <div className="bg-white rounded-2xl shadow-soft p-8">
+      {/* Left Side - Image */}
+      <div className="hidden lg:flex flex-1 items-center justify-center bg-gradient-to-br from-[#2B3990]/5 to-[#00A79D]/5 p-8">
+        <div className="max-w-lg text-center">
+          <div className="relative mb-8">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#2B3990]/20 to-[#00A79D]/20 rounded-3xl transform -rotate-6"></div>
+            <img 
+              src="/Screenshot_2025-05-28_230648-removebg-preview.png" 
+              alt="EMG Monitoring Device" 
+              className="relative w-full max-w-md mx-auto object-contain transform hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            {language === 'en' ? 'Join Our Platform' : 'Bergabung dengan Platform Kami'}
+          </h2>
+          <p className="text-lg text-gray-600 leading-relaxed">
+            {language === 'en' 
+              ? 'Start your journey with professional EMG monitoring. Access real-time data, comprehensive analytics, and advanced muscle strength assessment tools.'
+              : 'Mulai perjalanan Anda dengan monitoring EMG profesional. Akses data real-time, analitik komprehensif, dan alat penilaian kekuatan otot canggih.'
+            }
+          </p>
+          <div className="mt-8 flex justify-center space-x-4">
+            <div className="flex items-center text-[#2B3990]">
+              <i className="fas fa-chart-line mr-2"></i>
+              <span className="text-sm font-medium">
+                {language === 'en' ? 'Advanced Analytics' : 'Analitik Canggih'}
+              </span>
+            </div>
+            <div className="flex items-center text-[#00A79D]">
+              <i className="fas fa-shield-alt mr-2"></i>
+              <span className="text-sm font-medium">
+                {language === 'en' ? 'Secure Data' : 'Data Aman'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side - Form */}
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
-            <p className="text-gray-600">
-              Already have an account?{' '}
-              <Link to="/login" className="font-medium text-[#00A79D] hover:text-[#006B65] transition-colors">
-                Sign in
-              </Link>
-            </p>
+            <img src="/V3 1200-01.png" alt="EMG Monitor Logo" className="h-16 mx-auto mb-6" />
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('createAccount', language)}</h1>
+            <p className="text-lg text-gray-600">{t('joinPlatform', language)}</p>
           </div>
 
-          {error && (
-            <div className="mb-6 bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <i className="fas fa-exclamation-circle text-red-400"></i>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+            {error && (
+              <div className="mb-6 bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <i className="fas fa-exclamation-circle text-red-400"></i>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700">{error}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                Username
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="fas fa-user text-gray-400"></i>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2">
+                  {t('username', language)}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i className="fas fa-user text-[#2B3990]"></i>
+                  </div>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    required
+                    className="pl-12 w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#2B3990] focus:ring-4 focus:ring-[#2B3990]/10 transition-all duration-200 text-gray-900 placeholder-gray-500"
+                    placeholder={language === 'en' ? "Choose a username" : "Pilih nama pengguna"}
+                    value={formData.username}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
                 </div>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00A79D] focus:ring-2 focus:ring-[#00A79D]/20 transition-all duration-200"
-                  placeholder="Choose a username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
               </div>
-            </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="fas fa-envelope text-gray-400"></i>
+              <div>
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                  {t('emailAddress', language)}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i className="fas fa-envelope text-[#00A79D]"></i>
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    className="pl-12 w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#00A79D] focus:ring-4 focus:ring-[#00A79D]/10 transition-all duration-200 text-gray-900 placeholder-gray-500"
+                    placeholder={language === 'en' ? "Enter your email address" : "Masukkan alamat email Anda"}
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
                 </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00A79D] focus:ring-2 focus:ring-[#00A79D]/20 transition-all duration-200"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
               </div>
-            </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="fas fa-lock text-gray-400"></i>
+              <div>
+                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+                  {t('password', language)}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i className="fas fa-lock text-[#2B3990]"></i>
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    className="pl-12 w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#2B3990] focus:ring-4 focus:ring-[#2B3990]/10 transition-all duration-200 text-gray-900 placeholder-gray-500"
+                    placeholder={language === 'en' ? "Create a secure password" : "Buat kata sandi yang aman"}
+                    value={formData.password}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
                 </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00A79D] focus:ring-2 focus:ring-[#00A79D]/20 transition-all duration-200"
-                  placeholder="Create a password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
               </div>
-            </div>
 
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i className="fas fa-lock text-gray-400"></i>
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-700 mb-2">
+                  {t('confirmPassword', language)}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i className="fas fa-lock text-[#00A79D]"></i>
+                  </div>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    required
+                    className="pl-12 w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#00A79D] focus:ring-4 focus:ring-[#00A79D]/10 transition-all duration-200 text-gray-900 placeholder-gray-500"
+                    placeholder={language === 'en' ? "Confirm your password" : "Konfirmasi kata sandi Anda"}
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
                 </div>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  className="pl-10 w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#00A79D] focus:ring-2 focus:ring-[#00A79D]/20 transition-all duration-200"
-                  placeholder="Confirm your password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg text-white text-sm font-medium transition-all duration-200 ${
-                loading
-                  ? 'bg-[#00A79D]/60 cursor-not-allowed'
-                  : 'bg-[#00A79D] hover:bg-[#006B65] shadow-md hover:shadow-lg'
-              }`}
-            >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Creating account...
-                </>
-              ) : (
-                <>
-                  <i className="fas fa-user-plus mr-2"></i>
-                  Create Account
-                </>
-              )}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-xl text-white text-lg font-semibold transition-all duration-200 transform ${
+                  loading
+                    ? 'bg-[#2B3990]/60 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-[#2B3990] to-[#00A79D] hover:from-[#1A236B] hover:to-[#006B65] shadow-lg hover:shadow-xl hover:-translate-y-0.5'
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                    {t('creatingAccount', language)}
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-user-plus mr-3"></i>
+                    {t('createAccount', language)}
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-8 text-center">
+              <p className="text-gray-600">
+                {t('alreadyHaveAccount', language)}{' '}
+                <Link to="/login" className="font-semibold text-[#2B3990] hover:text-[#1A236B] transition-colors duration-200">
+                  {t('signInHere', language)}
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
