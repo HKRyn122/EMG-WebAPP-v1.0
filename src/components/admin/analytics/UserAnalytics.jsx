@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useUserAnalytics } from '../../../hooks/useUserAnalytics';
 import { database } from '../../../firebase';
-import { ref, update } from 'firebase/database';
+import { ref, update, remove } from 'firebase/database';
 import AnalyticsCard from './AnalyticsCard';
 import SKODistributionChart from './SKODistributionChart';
 import DataHistoryList from './DataHistoryList';
@@ -40,6 +40,17 @@ function UserAnalytics({ userId }) {
     }
   };
 
+  const handleDeleteNote = async (noteId) => {
+    if (!window.confirm('Are you sure you want to delete this note?')) return;
+
+    try {
+      await remove(ref(database, `users/${userId}/notes/${noteId}`));
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      setError('Failed to delete note. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center">
@@ -57,32 +68,32 @@ function UserAnalytics({ userId }) {
         </div>
         <button
           onClick={() => setShowAddNote(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="px-4 py-2 bg-[#00A79D] text-white rounded-lg hover:bg-[#006B65] transition-colors duration-200"
         >
           Add Note
         </button>
       </div>
 
-      <UserNotes userId={userId} className="mb-8" />
+      <UserNotes userId={userId} onDeleteNote={handleDeleteNote} className="mb-8" />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <AnalyticsCard
           title="Total Readings"
           value={analytics.totalReadings}
           icon="chart-line"
-          className="text-blue-600"
+          className="text-[#00A79D]"
         />
         <AnalyticsCard
-          title="Average SKO"
+          title="Average MSS"
           value={analytics.averageSKO}
           icon="star"
-          className="text-purple-600"
+          className="text-[#2B3990]"
         />
         <AnalyticsCard
-          title="Peak SKO"
+          title="Peak MSS"
           value={analytics.peakSKO}
           icon="arrow-up"
-          className="text-green-600"
+          className="text-[#00A79D]"
         />
       </div>
 
@@ -92,20 +103,20 @@ function UserAnalytics({ userId }) {
           value={analytics.averageVoltage}
           unit="mV"
           icon="bolt"
-          className="text-orange-600"
+          className="text-[#2B3990]"
         />
         <AnalyticsCard
           title="Peak Muscle Voltage"
           value={analytics.peakVoltage}
           unit="mV"
           icon="bolt"
-          className="text-red-600"
+          className="text-[#00A79D]"
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div className="card-gradient p-6 rounded-xl shadow-lg">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">SKO Distribution</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">MSS Distribution</h2>
           <SKODistributionChart distribution={analytics.skoDistribution} />
         </div>
         <div className="card-gradient p-6 rounded-xl shadow-lg">
@@ -115,7 +126,7 @@ function UserAnalytics({ userId }) {
       </div>
 
       {showAddNote && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">Add Note</h2>
             {error && (
@@ -140,7 +151,7 @@ function UserAnalytics({ userId }) {
               <button
                 onClick={handleAddNote}
                 disabled={addingNote}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-400"
+                className="px-4 py-2 bg-[#00A79D] text-white rounded hover:bg-[#006B65] disabled:bg-[#00A79D]/60"
               >
                 {addingNote ? 'Saving...' : 'Save Note'}
               </button>

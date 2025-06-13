@@ -13,6 +13,7 @@ export const useEMGData = () => {
   const [skoValue, setSkoValue] = useState('0');
   const [chartData, setChartData] = useState([]);
   const [timestamps, setTimestamps] = useState([]);
+  const [sessionHistory, setSessionHistory] = useState([]);
   const { user } = useAuth();
 
   // Reset all values when component mounts or user changes
@@ -23,6 +24,7 @@ export const useEMGData = () => {
     setSkoValue('0');
     setChartData([]);
     setTimestamps([]);
+    setSessionHistory([]);
   }, [user?.uid]);
 
   useEffect(() => {
@@ -48,18 +50,30 @@ export const useEMGData = () => {
         setChartData(chartData);
         setTimestamps(timestamps);
 
-        // Save history if user is logged in and values are valid
-        if (user?.uid && currentValue > 0) {
-          try {
-            await saveEMGHistory(user.uid, {
-              currentValue,
-              peakValue,
-              averageValue,
-              skoValue: calculateSKO(currentValue),
-              timestamp: Date.now()
-            });
-          } catch (error) {
-            console.error('Error saving EMG history:', error);
+        // Add to session history if we have valid data
+        if (currentValue > 0) {
+          const newHistoryEntry = {
+            id: `session_${Date.now()}`,
+            currentValue,
+            peakValue,
+            averageValue,
+            skoValue: calculateSKO(currentValue),
+            timestamp: Date.now()
+          };
+
+          setSessionHistory(prev => {
+            const updated = [newHistoryEntry, ...prev];
+            // Keep only last 50 entries for performance
+            return updated.slice(0, 50);
+          });
+
+          // Save to database history if user is logged in
+          if (user?.uid) {
+            try {
+              await saveEMGHistory(user.uid, newHistoryEntry);
+            } catch (error) {
+              console.error('Error saving EMG history:', error);
+            }
           }
         }
       }
@@ -76,6 +90,7 @@ export const useEMGData = () => {
     averageValue,
     skoValue,
     chartData,
-    timestamps
+    timestamps,
+    sessionHistory
   };
 };

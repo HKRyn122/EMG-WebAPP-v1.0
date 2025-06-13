@@ -54,10 +54,46 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-2px);
 }
 
-/* Navigation */
+/* Navigation - Perfect Grid Layout */
+.navbar-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+}
+
+.navbar-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+  .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navbar-center {
+    gap: 1rem;
+  }
+}
+
 .nav-link {
-  @apply text-gray-700 hover:text-primary transition-colors duration-200;
+  @apply text-gray-700 hover:text-primary transition-all duration-200;
   position: relative;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link:hover {
+  background-color: rgba(0, 167, 157, 0.05);
 }
 
 .nav-link::after {
@@ -65,14 +101,15 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   width: 0;
   height: 2px;
-  bottom: -4px;
-  left: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: var(--primary);
   transition: width 0.3s ease;
 }
 
 .nav-link:hover::after {
-  width: 100%;
+  width: 80%;
 }
 
 /* Buttons */
@@ -129,7 +166,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Medical Dashboard Elements */
 .vital-stats {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6;
 }
 
 .vital-card {
@@ -198,10 +235,118 @@ h1, h2, h3, h4, h5, h6 {
   @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
 }
 
+/* Landing Page Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes floatingElement {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(5px) rotate(-1deg); }
+}
+
+@keyframes gradientX {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 /* Animation Classes */
-.fade-in {
-  @apply transition-opacity duration-300;
-  animation: fadeIn 0.3s ease-in;
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.animate-fade-in-delay {
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out;
+}
+
+.animate-slide-up-delay {
+  animation: slideUp 0.8s ease-out 0.3s both;
+}
+
+.animate-fade-in-up {
+  animation: slideUp 0.8s ease-out 0.4s both;
+}
+
+.animate-fade-in-up-delay {
+  animation: slideUp 0.8s ease-out 0.6s both;
+}
+
+.animate-fade-in-up-delay-2 {
+  animation: slideUp 0.8s ease-out 0.8s both;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.8s ease-out 0.5s both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.8s ease-out 0.7s both;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-element {
+  animation: floatingElement 8s ease-in-out infinite;
+}
+
+.floating-element-delay {
+  animation: floatingElement 8s ease-in-out infinite 2s;
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradientX 15s ease infinite;
+}
+
+.slide-up {
+  @apply transition-all duration-300;
+  animation: slideUp 0.3s ease-out;
 }
 
 @keyframes fadeIn {
