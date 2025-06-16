@@ -16,7 +16,7 @@ const HistoryTable = ({ history, loading, isSessionData = false }) => {
 
   if (history.length === 0) {
     return (
-      <div className="medical-card text-center py-12">
+      <div className="medical-card text-center py-8">
         <i className="fas fa-chart-line text-4xl text-gray-300 mb-4"></i>
         <h3 className="text-lg font-semibold text-gray-600 mb-2">
           {isSessionData ? 'No Session Data' : 'No History Available'}
@@ -32,16 +32,16 @@ const HistoryTable = ({ history, loading, isSessionData = false }) => {
   }
 
   const tableTitle = isSessionData ? 'Current Session History' : 'Recent History';
-  const displayCount = isSessionData ? Math.min(history.length, 20) : 20;
+  const displayCount = isSessionData ? Math.min(history.length, 15) : 20;
 
   return (
     <div className="medical-card">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <i className={`fas ${isSessionData ? 'fa-clock' : 'fa-table'} text-xl text-primary`}></i>
+          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <i className={`fas ${isSessionData ? 'fa-clock' : 'fa-table'} text-lg text-primary`}></i>
           </div>
-          <h2 className="text-2xl font-semibold ml-4 text-gray-900">{tableTitle}</h2>
+          <h2 className="text-xl font-semibold ml-3 text-gray-900">{tableTitle}</h2>
         </div>
         {isSessionData && history.length > 0 && (
           <div className="flex items-center text-sm text-gray-500">
@@ -55,38 +55,38 @@ const HistoryTable = ({ history, loading, isSessionData = false }) => {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Time</th>
-              <th>Voltage (mV)</th>
-              <th>Peak (mV)</th>
-              <th>Average (mV)</th>
-              <th>MSS Grade</th>
+              <th className="text-left">Time</th>
+              <th className="text-center">Voltage (mV)</th>
+              <th className="text-center">Peak (mV)</th>
+              <th className="text-center">Average (mV)</th>
+              <th className="text-center">MSS Grade</th>
             </tr>
           </thead>
           <tbody>
             {history.slice(0, displayCount).map((entry, index) => (
               <tr key={entry.id || index} className="hover:bg-gray-50 transition-colors duration-150">
-                <td className="font-medium">
+                <td className="font-medium text-gray-900">
                   {isSessionData 
                     ? new Date(entry.timestamp).toLocaleTimeString()
                     : new Date(entry.timestamp).toLocaleTimeString()
                   }
                 </td>
-                <td>
+                <td className="text-center">
                   <span className="px-2 py-1 bg-[#00A79D]/10 text-[#00A79D] rounded-full text-sm font-medium">
                     {Number(entry.currentValue).toFixed(2)}
                   </span>
                 </td>
-                <td>
+                <td className="text-center">
                   <span className="px-2 py-1 bg-[#2B3990]/10 text-[#2B3990] rounded-full text-sm font-medium">
                     {Number(entry.peakValue).toFixed(2)}
                   </span>
                 </td>
-                <td>
+                <td className="text-center">
                   <span className="px-2 py-1 bg-[#00A79D]/10 text-[#00A79D] rounded-full text-sm font-medium">
                     {Number(entry.averageValue).toFixed(2)}
                   </span>
                 </td>
-                <td>
+                <td className="text-center">
                   <span className="px-2 py-1 bg-[#2B3990]/10 text-[#2B3990] rounded-full text-sm font-medium">
                     Grade {entry.skoValue}
                   </span>

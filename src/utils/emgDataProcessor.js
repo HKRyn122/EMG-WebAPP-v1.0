@@ -34,8 +34,8 @@ export const processEMGData = (data) => {
     // Calculate average from recent entries only
     const averageValue = Number((allValues.reduce((acc, val) => acc + val, 0) / allValues.length).toFixed(2));
 
-    // Get last 60 entries for chart, but only from recent data
-    const chartEntries = recentEntries.slice(-60).reverse();
+    // Get only last 12 entries for chart for better readability
+    const chartEntries = recentEntries.slice(-12).reverse();
 
     return {
       currentValue: Number(currentValue.toFixed(2)),

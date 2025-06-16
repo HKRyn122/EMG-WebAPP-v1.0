@@ -96,17 +96,22 @@ function Monitor() {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="chart-container">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900">Real-time EMG Data</h3>
-            <EMGChart data={chartData} timestamps={timestamps} />
+          {/* Left Column: Chart + Session History */}
+          <div className="space-y-8">
+            <div className="chart-container">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900">Real-time EMG Data</h3>
+              <EMGChart data={chartData} timestamps={timestamps} />
+            </div>
+            
+            {/* Session History directly below chart */}
+            <HistoryTable history={sessionHistory} loading={false} isSessionData={true} />
           </div>
+          
+          {/* Right Column: MSS Status */}
           <div className="medical-card">
             <SKOIndicator currentSKO={skoValue} />
           </div>
         </div>
-
-        {/* Session History Table */}
-        <HistoryTable history={sessionHistory} loading={false} isSessionData={true} />
       </div>
     </div>
   );

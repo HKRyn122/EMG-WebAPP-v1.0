@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { database } from '../../firebase';
-import { ref, query, orderByChild, limitToLast, onValue } from 'firebase/database';
+import { ref, query, orderByChild, limitToLast, onValue, get } from 'firebase/database';
 
 function AdminDashboard() {
   const { user } = useAuth();
@@ -12,52 +12,79 @@ function AdminDashboard() {
     totalReadings: 0,
     activeSessions: 0
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch recent activity from history
-    const historyRef = query(
-      ref(database, 'history'),
-      orderByChild('timestamp'),
-      limitToLast(10)
-    );
-
-    const unsubscribe = onValue(historyRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const historyData = Object.entries(snapshot.val())
-          .map(([id, data]) => ({ id, ...data }))
-          .sort((a, b) => b.timestamp - a.timestamp)
-          .slice(0, 5);
-
-        // Fetch user data for each activity
+    const fetchStats = async () => {
+      try {
+        // Fetch total users
         const usersRef = ref(database, 'users');
-        onValue(usersRef, (usersSnapshot) => {
-          if (usersSnapshot.exists()) {
-            const users = usersSnapshot.val();
-            const activities = historyData.map(activity => ({
-              ...activity,
-              username: users[activity.userId]?.username || 'Unknown User',
-              type: 'emg_reading'
-            }));
-            setRecentActivity(activities);
+        const usersSnapshot = await get(usersRef);
+        const totalUsers = usersSnapshot.exists() ? Object.keys(usersSnapshot.val()).length : 0;
 
-            // Calculate stats
-            const totalUsers = Object.keys(users).length;
-            const totalReadings = Object.keys(snapshot.val()).length;
-            const activeSessions = activities.filter(a => 
-              Date.now() - a.timestamp < 300000 // Active in last 5 minutes
-            ).length;
+        // Fetch total readings from history
+        const historyRef = ref(database, 'history');
+        const historySnapshot = await get(historyRef);
+        const totalReadings = historySnapshot.exists() ? Object.keys(historySnapshot.val()).length : 0;
 
-            setStats({
-              totalUsers,
-              totalReadings,
-              activeSessions
-            });
-          }
+        // Calculate active sessions (users with activity in last 5 minutes)
+        const fiveMinutesAgo = Date.now() - 300000;
+        let activeSessions = 0;
+        
+        if (historySnapshot.exists()) {
+          const historyData = Object.values(historySnapshot.val());
+          const activeUserIds = new Set();
+          
+          historyData.forEach(entry => {
+            if (entry.timestamp > fiveMinutesAgo) {
+              activeUserIds.add(entry.userId);
+            }
+          });
+          
+          activeSessions = activeUserIds.size;
+        }
+
+        setStats({
+          totalUsers,
+          totalReadings,
+          activeSessions
         });
-      }
-    });
 
-    return () => unsubscribe();
+        // Fetch recent activity
+        const recentHistoryRef = query(
+          ref(database, 'history'),
+          orderByChild('timestamp'),
+          limitToLast(10)
+        );
+
+        onValue(recentHistoryRef, (snapshot) => {
+          if (snapshot.exists()) {
+            const historyData = Object.entries(snapshot.val())
+              .map(([id, data]) => ({ id, ...data }))
+              .sort((a, b) => b.timestamp - a.timestamp)
+              .slice(0, 5);
+
+            // Fetch user data for each activity
+            if (usersSnapshot.exists()) {
+              const users = usersSnapshot.val();
+              const activities = historyData.map(activity => ({
+                ...activity,
+                username: users[activity.userId]?.username || 'Unknown User',
+                type: 'emg_reading'
+              }));
+              setRecentActivity(activities);
+            }
+          }
+          setLoading(false);
+        });
+
+      } catch (error) {
+        console.error('Error fetching admin stats:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
   }, []);
 
   const getActivityIcon = (type) => {
@@ -94,6 +121,14 @@ function AdminDashboard() {
     if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     return 'Just now';
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f8fafc] to-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00A79D]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] to-white py-8">
